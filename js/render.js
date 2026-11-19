@@ -43,9 +43,12 @@ var NR = globalThis.NR = globalThis.NR || {};
       this.cv.style.width = cw + 'px';
       this.cv.style.height = ch + 'px';
       this.dpr = dpr;
-      this.scale = Math.min(this.cv.width / W, this.cv.height / H);
-      this.ox = (this.cv.width - W * this.scale) / 2;
-      this.oy = (this.cv.height - H * this.scale) / 2;
+      // Безопасная зона (вырез и home-индикатор iPhone): мир вписывается в неё, фон — на весь экран
+      const sa = NR.safe || { l: 0, r: 0, t: 0, b: 0 };
+      const aw = this.cv.width - (sa.l + sa.r) * dpr, ah = this.cv.height - (sa.t + sa.b) * dpr;
+      this.scale = Math.min(aw / W, ah / H);
+      this.ox = sa.l * dpr + (aw - W * this.scale) / 2;
+      this.oy = sa.t * dpr + (ah - H * this.scale) / 2;
       this.makeBg();
     }
 

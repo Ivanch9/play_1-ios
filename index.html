@@ -4,19 +4,47 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>Neon Rift</title>
+  <!-- iOS: запуск с экрана «Домой» на весь экран, без панелей Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Neon Rift">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <style>
-    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
-    canvas { display: block; cursor: none; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; overscroll-behavior: none; }
+    body { position: fixed; inset: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; }
+    canvas { display: block; cursor: none; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+    /* Ориентацию в iOS заблокировать нельзя — просим повернуть телефон */
+    #rotate { display: none; position: fixed; inset: 0; z-index: 10; background: #07040f; color: #33ffff;
+      font: 600 20px/1.4 -apple-system, "Helvetica Neue", Arial, sans-serif; text-align: center;
+      flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; box-sizing: border-box;
+      text-shadow: 0 0 12px #33ffff; }
+    #rotate .ph { width: 46px; height: 80px; border: 3px solid #ff66cc; border-radius: 10px; box-shadow: 0 0 14px #ff66cc;
+      animation: nr-rot 2s ease-in-out infinite; }
+    @keyframes nr-rot { 0%, 25% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+    @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
   </style>
 </head>
 <body>
   <canvas id="game"></canvas>
+  <div id="rotate"><div class="ph"></div><div>Поверните телефон горизонтально</div></div>
   <!-- Обычные скрипты (не модули), чтобы игра открывалась и по file:// -->
   <script src="js/engine.js"></script>
+  <script src="js/ios.js"></script>
   <script src="js/game.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/render.js"></script>
   <script src="js/touch.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    // Офлайн-кэш для PWA (по file:// service worker недоступен — просто пропускаем)
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
 </body>
 </html>

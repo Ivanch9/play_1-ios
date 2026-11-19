@@ -16,7 +16,7 @@ var NR = globalThis.NR = globalThis.NR || {};
 
     init() {
       if (this.ctx) {
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx.state !== 'running') this.ctx.resume(); // suspended или interrupted (iOS)
         return;
       }
       const AC = window.AudioContext || window.webkitAudioContext;

@@ -33,12 +33,15 @@ var NR = globalThis.NR = globalThis.NR || {};
     recent() { return performance.now() - this.lastTouch < 1000; }
 
     layout() {
-      const w = innerWidth, h = innerHeight;
+      // Отступы безопасной зоны (вырез iPhone); без NR.safe — нули
+      const sa = NR.safe || { l: 0, r: 0, t: 0, b: 0 };
+      const w = innerWidth - sa.l - sa.r, h = innerHeight - sa.t - sa.b;
+      const x0 = sa.l, y0 = sa.t;
       const m = Math.max(16, Math.min(w, h) * 0.05);
-      this.pauseBtn = { x: w - m - 22, y: m + 22, r: 22 };
-      this.dashBtn = { x: w - m - 44, y: Math.max(h * 0.42, m + 120), r: 40 };
-      this.homeMove = { x: m + STICK_R + 20, y: h - m - STICK_R - 10 };
-      this.homeAim = { x: w - m - STICK_R - 90, y: h - m - STICK_R - 10 };
+      this.pauseBtn = { x: x0 + w - m - 22, y: y0 + m + 22, r: 22 };
+      this.dashBtn = { x: x0 + w - m - 44, y: y0 + Math.max(h * 0.42, m + 120), r: 40 };
+      this.homeMove = { x: x0 + m + STICK_R + 20, y: y0 + h - m - STICK_R - 10 };
+      this.homeAim = { x: x0 + w - m - STICK_R - 90, y: y0 + h - m - STICK_R - 10 };
     }
 
     static hit(b, x, y, extra) { return Math.hypot(x - b.x, y - b.y) <= b.r + (extra || 0); }
